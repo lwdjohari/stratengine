@@ -16,6 +16,6 @@
 [submodule "thirdparty/assimp"]
 	path = thirdparty/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "libsndfile"]
-	path = libsndfile
+[submodule "thirdparty/libsndfile"]
+	path = thirdparty/libsndfile
 	url = https://github.com/libsndfile/libsndfile.git
