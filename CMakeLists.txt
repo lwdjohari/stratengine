@@ -44,9 +44,9 @@ find_package(Threads REQUIRED)
 
 set(SDL_SHARED OFF)
 # # Add SDL2
-# message(STATUS "SDL2: ON")
-# add_subdirectory(thirdparty/sdl build-sdl)
-# message(STATUS "SDL2 Include DIR: ${SDL2_INCLUDE_DIRS}")
+message(STATUS "SDL2: ON")
+add_subdirectory(thirdparty/sdl build-sdl)
+message(STATUS "SDL2 Include DIR: ${SDL2_INCLUDE_DIRS}")
 
 
 # Add bgfx
@@ -71,7 +71,7 @@ file(GLOB_RECURSE SOURCES_STX CONFIGURE_DEPENDS
 add_library(${PROJECT_NAME} STATIC ${SOURCES_STX} )
 target_link_libraries(${PROJECT_NAME}  
     PUBLIC
-        #SDL2-static
+        SDL2-static
         bgfx
     )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
@@ -80,6 +80,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/engine/
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fp16/
         ${BGFX_DIR}/include
         ${BIMG_DIR}/include
 )
