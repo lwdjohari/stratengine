@@ -32,3 +32,4 @@
 *.app
 
 build/
+thirdparty/bgfx-cmake/examples/*

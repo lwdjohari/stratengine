@@ -21,3 +21,15 @@
 [submodule "thirdparty/bgfx-cmake"]
 	path = thirdparty/bgfx-cmake
 	url = https://github.com/bkaradzic/bgfx.cmake.git
+[submodule "thirdparty/fp16"]
+	path = thirdparty/fp16
+	url = https://github.com/Maratyszcza/FP16.git
+[submodule "thirdparty/recastnavigation"]
+	path = thirdparty/recastnavigation
+	url = https://github.com/recastnavigation/recastnavigation.git
+[submodule "thirdparty/openal-soft"]
+	path = thirdparty/openal-soft
+	url = https://github.com/kcat/openal-soft.git
+[submodule "thirdparty/meshoptimizer"]
+	path = thirdparty/meshoptimizer
+	url = https://github.com/zeux/meshoptimizer.git
