@@ -33,3 +33,6 @@
 [submodule "thirdparty/meshoptimizer"]
 	path = thirdparty/meshoptimizer
 	url = https://github.com/zeux/meshoptimizer.git
+[submodule "thirdparty/tinymixer"]
+	path = thirdparty/tinymixer
+	url = https://github.com/mendsley/tinymixer.git
