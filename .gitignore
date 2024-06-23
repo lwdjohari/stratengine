@@ -33,3 +33,4 @@
 
 build/
 thirdparty/bgfx-cmake/examples/*
+thirdparty/bgfx-cmake
