@@ -36,3 +36,6 @@
 [submodule "thirdparty/tinymixer"]
 	path = thirdparty/tinymixer
 	url = https://github.com/mendsley/tinymixer.git
+[submodule "thirdparty/xatlas"]
+	path = thirdparty/xatlas
+	url = https://github.com/jpcy/xatlas.git
