@@ -4,6 +4,7 @@
 #include <bgfx/platform.h>
 #include <cstring>
 #include <iostream>
+#include "stratengine/stratengine.h"
 
 int main(int argc, char *argv[])
 {
