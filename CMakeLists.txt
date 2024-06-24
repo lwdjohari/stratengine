@@ -7,6 +7,17 @@ set(STRATENGINE_VER "0.0.9")
 message( STATUS "Stratengine v${STRATENGINE_VER}")
 message( STATUS "-----------------------------")
 
+option(BUILD_SHARED_LIBS OFF)
+# Assimp
+option(ASSIMP_INSTALL OFF)
+option(ASSIMP_BUILD_TESTS OFF)
+option(ASSIMP_INJECT_DEBUG_POSTFIX ON)
+# GLM
+option(GLM_BUILD_INSTALL OFF)
+option(GLM_ENABLE_CXX_17 ON)
+option(GLM_ENABLE_FAST_MATH ON)
+option(GLM_BUILD_TESTS OFF)
+
 include(ProjectCXX)
 set(ISROOT FALSE)
 set(CXX_FEATURE "")
@@ -55,6 +66,22 @@ message(STATUS "bgfx: ON")
 add_subdirectory(thirdparty/bgfx-cmake build-bgfx)
 message(STATUS "bgfx Include DIR: ${BGFX_DIR}/include")
 message(STATUS "bgimg Include DIR: ${BIMG_DIR}/include")
+message(STATUS "bx Include DIR: ${BX_DIR}/include")
+
+
+
+
+set(GLM_BUILD_INSTALL OFF)
+set(GLM_ENABLE_CXX_17 ON)
+set(GLM_ENABLE_FAST_MATH ON)
+set(GLM_BUILD_TESTS OFF)
+add_subdirectory(thirdparty/glm build-glm)
+
+#add Assimp
+set(ASSIMP_INSTALL OFF)
+set(ASSIMP_BUILD_TESTS OFF)
+set(ASSIMP_INJECT_DEBUG_POSTFIX ON)
+add_subdirectory(thirdparty/assimp build-assimp)
 
 
 # Include directories
@@ -73,16 +100,20 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC
         SDL2-static
         bgfx
+        bx
+        glm::glm
+        assimp
     )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_definitions(${PROJECT_NAME} PUBLIC "STRATENGINE_USE_LIBUV=0")
 target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/
+        ${CMAKE_CURRENT_SOURCE_DIR}/engine/src/
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fp16/
         ${BGFX_DIR}/include
         ${BIMG_DIR}/include
+        ${BX_DIR}/include
 )
 
 add_library(${PROJECT_NAME}::stratengine ALIAS ${PROJECT_NAME} )
