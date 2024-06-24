@@ -1,0 +1,7 @@
+#define STRATE_NAMESPACE namespace stratengine
+#define STRATE_BEGIN_NAMESPACE STRATE_NAMESPACE {
+#define STRATE_END_NAMESPACE }
+#define STRATE_INNER_NAMESPACE(arg) \
+  STRATE_BEGIN_NAMESPACE            \
+  namespace arg {
+#define STRATE_INNER_END_NAMESPACE }}
