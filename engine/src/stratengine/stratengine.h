@@ -10,3 +10,4 @@
 #include "stratengine/asset/asset_manager.h"
 #include "stratengine/scene.h"
 #include "stratengine/scene_loader.h"
+#include "stratengine/platform/app.h"
