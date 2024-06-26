@@ -6,17 +6,12 @@
 
 #include <iostream>
 
-#if BX_PLATFORM_LINUX
-#if ENTRY_CONFIG_USE_WAYLAND
+#if STRATE_PLATFORM_LINUX == 1
 #include <wayland-egl.h>
-#endif
-#elif BX_PLATFORM_WINDOWS
-#define SDL_MAIN_HANDLED
 #endif
 
 #include "stratengine/macro.h"
 
-// cppcheck-suppress unknownMacro
 STRATE_INNER_NAMESPACE(platform)
 
 enum class StratEngineAppResult {
@@ -39,12 +34,155 @@ enum class PlatformType {
   kWebGL = 6
 };
 
+enum class LinuxDisplayType { kNone = 0, kX11 = 1, kWayland = 2 };
+
+STRATE_ENUM_CLASS_ENABLE_BITMASK_OPERATORS(LinuxDisplayType)
+
+STRATE_ENUM_CLASS_DISPLAY_TRAIT(LinuxDisplayType)
+
+STRATE_ENUM_CLASS_TO_STRING_FORMATTER(LinuxDisplayType,
+                                      case LinuxDisplayType::kNone
+                                      // cppcheck-suppress syntaxError
+                                      : return "None";
+                                      case LinuxDisplayType::kWayland
+                                      : return "Wayland";
+                                      case LinuxDisplayType::kX11
+                                      : return "X11";);
+
 enum class RenderedBackend {
-  kOpenGL,
-  kOpenGLES,
-  kVulkan,
-  kMetal,
+  kNone = 0,
+  kOpenGL = 1,
+  kOpenGLES = 2,
+  kVulkan = 4,
+  kMetal = 8,
+  kDirect3D11 = 16,
+  kDirect3D12 = 32,
+  kOffScreen = 64,
+  kDummy = 128,
+  kNoop = 256,
 };
+
+STRATE_ENUM_CLASS_ENABLE_BITMASK_OPERATORS(RenderedBackend)
+
+STRATE_ENUM_CLASS_DISPLAY_TRAIT(RenderedBackend)
+
+STRATE_ENUM_CLASS_TO_STRING_FORMATTER(RenderedBackend,
+                                      case RenderedBackend::kDirect3D11
+                                      : return "Direct3D11";
+                                      case RenderedBackend::kDirect3D12
+                                      : return "Direct3D12";
+                                      case RenderedBackend::kDummy
+                                      : return "Dummy";
+                                      case RenderedBackend::kMetal
+                                      : return "Metal";
+                                      case RenderedBackend::kOffScreen
+                                      : return "Offscreen";
+                                      case RenderedBackend::kNone
+                                      : return "None";
+                                      case RenderedBackend::kNoop
+                                      : return "Noop";
+                                      case RenderedBackend::kOpenGL
+                                      : return "OpenGL";
+                                      case RenderedBackend::kOpenGLES
+                                      : return "OpenGLES";
+                                      case RenderedBackend::kVulkan
+                                      : return "Vulkan";);
+
+static RenderedBackend FromBgfxRenderType(bgfx::RendererType::Enum renderer) {
+  switch (renderer) {
+    case bgfx::RendererType::OpenGL:
+      return RenderedBackend::kOpenGL;
+      break;
+    case bgfx::RendererType::OpenGLES:
+      return RenderedBackend::kOpenGLES;
+      break;
+    case bgfx::RendererType::Vulkan:
+      return RenderedBackend::kVulkan;
+      break;
+    case bgfx::RendererType::Metal:
+      return RenderedBackend::kMetal;
+    case bgfx::RendererType::Direct3D11:
+      return RenderedBackend::kDirect3D11;
+    case bgfx::RendererType::Direct3D12:
+      return RenderedBackend::kDirect3D12;
+    case bgfx::RendererType::Noop:
+      return RenderedBackend::kNoop;
+    default:
+      return RenderedBackend::kNone;
+  }
+
+  return RenderedBackend::kNone;
+}
+
+static RenderedBackend GetSupportedRenderedBackend() {
+  bgfx::RendererType::Enum supportedRenderers[bgfx::RendererType::Count];
+  uint8_t numSupported = bgfx::getSupportedRenderers(bgfx::RendererType::Count,
+                                                     supportedRenderers);
+
+  RenderedBackend stratengine_backends = RenderedBackend::kDummy |
+                                         RenderedBackend::kNoop |
+                                         RenderedBackend::kOffScreen;
+
+  for (uint8_t i = 0; i < numSupported; ++i) {
+    // const char* name = bgfx::getRendererName(supportedRenderers[i]);
+    // std::cout << " - " << name << std::endl;
+
+    RenderedBackend backend = FromBgfxRenderType(supportedRenderers[i]);
+    if (backend != RenderedBackend::kNone ||
+        backend != RenderedBackend::kNoop) {
+      stratengine_backends = stratengine_backends | backend;
+    }
+  }
+
+  return stratengine_backends;
+}
+
+static LinuxDisplayType GetLinuxDisplayType() {
+  int numVideoDrivers = SDL_GetNumVideoDrivers();
+
+  LinuxDisplayType type = LinuxDisplayType::kNone;
+
+  for (int i = 0; i < numVideoDrivers; ++i) {
+    const char* driverName = SDL_GetVideoDriver(i);
+    if (strcmp(driverName, "wayland") == 0) {
+      type = type | LinuxDisplayType::kWayland;
+    } else if (strcmp(driverName, "x11") == 0) {
+      type = type | LinuxDisplayType::kX11;
+    }
+  }
+
+  return type;
+}
+
+static LinuxDisplayType DetermineLinuxDisplayType(LinuxDisplayType target,
+                                                  LinuxDisplayType fallback) {
+  auto displays = GetLinuxDisplayType();
+
+  if ((displays & target) != LinuxDisplayType::kNone) {
+    return target;
+  }
+
+  if ((displays & fallback) != LinuxDisplayType::kNone) {
+    return fallback;
+  }
+
+  return LinuxDisplayType::kNone;
+}
+
+static RenderedBackend DetermineRenderedBackend(RenderedBackend target,
+                                                RenderedBackend fallback) {
+  auto backends = GetSupportedRenderedBackend();
+
+  if ((backends & target) != RenderedBackend::kNone) {
+    return target;
+  }
+
+  if ((backends & fallback) != RenderedBackend::kNone) {
+    return fallback;
+  }
+
+  return RenderedBackend::kNone;
+}
 
 class StratEngineApp {
  public:
@@ -54,6 +192,7 @@ class StratEngineApp {
                     ndt_display_(nullptr),
                     ptype_(GetPlatform()),
                     initialization_state_(Init()),
+                    linux_display_type_(),
                     is_rendered_run_(false),
                     is_window_created_(false) {}
 
@@ -63,10 +202,27 @@ class StratEngineApp {
   }
 
   StratEngineAppResult InitApp(RenderedBackend backend, const std::string& text,
+                               bool use_wayland_if_avail_in_linux) {
+    return InitApp(backend, text, 1280, 720, false,
+                   use_wayland_if_avail_in_linux);
+  }
+
+  StratEngineAppResult InitApp(RenderedBackend backend, const std::string& text,
                                int width = 1280, int height = 720,
-                               bool fullscreen = false) {
+                               bool fullscreen = false,
+                               bool use_wayland_if_avail_in_linux = true) {
     if (window_)
       return StratEngineAppResult::kWindowAlreadyCreated;
+
+#if STRATE_PLATFORM_LINUX == 1
+    if (use_wayland_if_avail_in_linux) {
+      linux_display_type_ = LinuxDisplayType::kWayland;
+    } else {
+      linux_display_type_ = LinuxDisplayType::kX11;
+    }
+#else
+    linux_display_type_ = LinuxDisplayType::kNone;
+#endif
 
     auto create_win_res =
         CreateWindowImpl(backend, window_, text, width, height, fullscreen);
@@ -86,6 +242,10 @@ class StratEngineApp {
     return StratEngineAppResult::kOk;
   }
 
+  const LinuxDisplayType& LinuxDisplay() const {
+    return linux_display_type_;
+  }
+
   const RenderedBackend& Backend() const {
     return backend_;
   }
@@ -95,20 +255,17 @@ class StratEngineApp {
   }
 
   StratEngineAppResult InitRenderedBackend() {
-#if defined(_WIN32) || defined(_WIN64)
+#if STRATE_PLATFORM_WINDOWS == 1
     ndt_display_ = nullptr;
-#elif defined(__APPLE__)
+#elif STRATE_PLATFORM_IOS == 1
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     ndt_display_ = wmi.info.cocoa.window;
-    ;
-
-#elif TARGET_OS_MAC
+#elif STRATE_PLATFORM_OSX
     ndt_display_ = wmi.info.cocoa.window;
-
 #endif
-#elif defined(__ANDROID__)
+#elif STRATE_PLATFORM_ANDROID == 1
     ndt_display_ = wmi.info.android.window;
-#elif defined(__linux__)
+#elif STRATE_PLATFORM_LINUX == 1
     if (wmi_.subsystem == SDL_SYSWM_WAYLAND) {
       ndt_display_ = wmi_.info.wl.display;
 
@@ -158,7 +315,7 @@ class StratEngineApp {
   }
 
   void ShutdownRenderedBackend() {
-    if(!is_rendered_run_)
+    if (!is_rendered_run_)
       return;
     bgfx::shutdown();
     is_rendered_run_ = false;
@@ -169,14 +326,15 @@ class StratEngineApp {
   }
 
   void ShutdownApp() {
-    if (!is_window_created_)
+    if (!is_window_created_) {
+      SDL_Quit();
       return;
+    }
 
     is_window_created_ = false;
 
     SDL_DestroyWindow(window_);
     SDL_Quit();
-
   }
 
  private:
@@ -187,8 +345,9 @@ class StratEngineApp {
   PlatformType ptype_;
   StratEngineAppResult initialization_state_;
   RenderedBackend backend_;
+  LinuxDisplayType linux_display_type_;
   bool is_rendered_run_;
-  bool is_window_created_; 
+  bool is_window_created_;
 
   bgfx::NativeWindowHandleType::Enum GetNativeWindowHandleType() {
     return bgfx::NativeWindowHandleType::Default;
@@ -243,21 +402,21 @@ class StratEngineApp {
   }
 
   PlatformType GetPlatform() {
-#if defined(_WIN32) || defined(_WIN64)
+#if STRATE_PLATFORM_WINDOWS == 1
     return PlatformType::kWindows;
-
-#elif defined(__APPLE__)
+#elif STRATE_PLATFORM_IOS == 1
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     return PlatformType::kIOS;
-#elif TARGET_OS_MAC
+#endif
+#elif STRATE_PLATFORM_IOS == 1
     return PlatformType::kMacOSX;
-#endif
-#elif defined(__ANDROID__)
-    return PlatformType::Android;
-#elif defined(__linux__)
+#elif STRATE_PLATFORM_ANDROID == 1
+    return PlatformType::kAndroid;
+#elif STRATE_PLATFORM_LINUX == 1
     return PlatformType::kLinux;
-#endif
+#else
     return PlatformType::kUnsupportedPlatform;
+#endif
   }
 
   StratEngineAppResult Init() {
@@ -299,18 +458,17 @@ class StratEngineApp {
   }
 
   StratEngineAppResult GetNativeWindowHandle(void* native_window_handle) {
-#if defined(_WIN32) || defined(_WIN64)
+#if STRATE_PLATFORM_WINDOWS == 1
     native_window_handle = (void*)wmi_.info.win.window;
-
-#elif defined(__APPLE__)
+#elif STRATE_PLATFORM_IOS == 1
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     native_window_handle = wmi_.info.uikit.window;
-#elif TARGET_OS_MAC
-    native_window_handle = (void*)wmi_.info.cocoa.window;
 #endif
-#elif defined(__ANDROID__)
+#elif STRATE_PLATFORM_OSX == 1
+    native_window_handle = (void*)wmi_.info.cocoa.window;
+#elif STRATE_PLATFORM_ANDROID == 1
     native_window_handle = (void*)wmi_.info.android.window;
-#elif defined(__linux__)
+#elif STRATE_PLATFORM_LINUX == 1
     if (wmi_.subsystem == SDL_SYSWM_X11) {
       native_window_handle_ = (void*)(uintptr_t)wmi_.info.x11.window;
     } else if (wmi_.subsystem == SDL_SYSWM_WAYLAND) {
