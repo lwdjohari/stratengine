@@ -32,6 +32,7 @@
 *.app
 
 build/
-thirdparty/bgfx-cmake/examples/*
-thirdparty/bgfx-cmake
+thirdparty/bgfx-cmake/bgfx/examples/
+thirdparty/bgfx-cmake/bgfx/examples/runtime/shaders/
+thirdparty/bgfx-cmake/
 _impl/
