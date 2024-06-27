@@ -14,6 +14,8 @@ int main(int argc, char* argv[]) {
   platform::StratEngineApp app;
   platform::RenderedBackend rendered_backend;
   platform::LinuxDisplayType linux_display_type;
+  material::graph::constants::Constant1Vector cv;
+  
 
 // Auto Determine what best rendered in linux, windows, osx, android & ios and
 // the fallback
