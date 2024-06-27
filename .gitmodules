@@ -1,7 +1,6 @@
 [submodule "thirdparty/sdl"]
 	path = thirdparty/sdl
 	url = https://github.com/libsdl-org/SDL.git
-	url = https://github.com/jarikomppa/soloud.git
 [submodule "thirdparty/enet"]
 	path = thirdparty/enet
 	url = https://github.com/lsalzman/enet.git
@@ -14,8 +13,6 @@
 [submodule "thirdparty/libsndfile"]
 	path = thirdparty/libsndfile
 	url = https://github.com/libsndfile/libsndfile.git
-	url = https://github.com/bkaradzic/bgfx.cmake.git
-	url = https://github.com/bkaradzic/bgfx.cmake.git
 [submodule "thirdparty/bgfx-cmake"]
 	path = thirdparty/bgfx-cmake
 	url = https://github.com/bkaradzic/bgfx.cmake.git
@@ -40,3 +37,6 @@
 [submodule "thirdparty/glm"]
 	path = thirdparty/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "thirdparty/imgui-docked"]
+	path = thirdparty/imgui-docked
+	url = https://github.com/ocornut/imgui.git
