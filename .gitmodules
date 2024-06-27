@@ -1,8 +1,6 @@
 [submodule "thirdparty/sdl"]
 	path = thirdparty/sdl
 	url = https://github.com/libsdl-org/SDL.git
-[submodule "thirdparty/soloud"]
-	path = thirdparty/soloud
 	url = https://github.com/jarikomppa/soloud.git
 [submodule "thirdparty/enet"]
 	path = thirdparty/enet
