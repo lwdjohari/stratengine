@@ -2,6 +2,7 @@
 
 #define STRATE_NAMESPACE namespace stratengine
 #define STRATE_BEGIN_NAMESPACE STRATE_NAMESPACE {
+#define STRATE_MAKE_NAMESPACE(arg) namespace arg {
 #define STRATE_END_NAMESPACE }
 #define STRATE_INNER_NAMESPACE(arg) \
   STRATE_BEGIN_NAMESPACE            \
@@ -460,6 +461,30 @@ static_assert(false, "\n\n"
                      "\t\n");
 #endif  // STRATE_PLATFORM_*
 
+
+
+#if STRATE_COMPILER_CLANG || STRATE_COMPILER_GCC
+#define STRATE_FN_EXPERIMENTAL \
+  [[gnu::warning("Experimental feature, subject to change")]]
+#elif STRATE_COMPILER_MSVC && (!defined(_MSVC_TRADITIONAL) || _MSVC_TRADITIONAL)
+#define STRATE_FN_EXPERIMENTAL \
+  __declspec(deprecated("Experimental feature, subject to change"))
+#else
+#define STRATE_FN_EXPERIMENTAL
+#endif
+
+#if STRATE_COMPILER_CLANG || STRATE_COMPILER_GCC
+#define STRATE_FN_WIP                                                          \
+  [[gnu::warning("Work-in-progress feature, subject to change or not covered " \
+                 "all features")]]
+#elif STRATE_COMPILER_MSVC && (!defined(_MSVC_TRADITIONAL) || _MSVC_TRADITIONAL)
+#define STRATE_FN_WIP                                                         \
+  __declspec(deprecated("Work-in-progress feature, subject to change or not " \
+                        "covered all features"))
+#else
+#define STRATE_FN_WIP
+#endif
+
 #include <iostream>
 #include <type_traits>
 
@@ -494,8 +519,8 @@ template <typename Enum, typename Lambda>
 std::string enum_to_string_impl(Enum e, Lambda lambda) {
   return lambda(e);
 }
-}
-}
+}  // namespace impl
+}  // namespace stratengine
 
 #define STRATE_ENUM_CLASS_TO_STRING_FORMATTER(EnumType, ...)         \
                                                                      \
@@ -507,5 +532,5 @@ std::string enum_to_string_impl(Enum e, Lambda lambda) {
           throw std::invalid_argument("Unsupported enum value");     \
       }                                                              \
     };                                                               \
-    return stratengine::impl::enum_to_string_impl(e, toStringFunc);        \
+    return stratengine::impl::enum_to_string_impl(e, toStringFunc);  \
   }
