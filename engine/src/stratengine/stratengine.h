@@ -11,3 +11,4 @@
 #include "stratengine/scene.h"
 #include "stratengine/scene_loader.h"
 #include "stratengine/platform/app.h"
+#include "stratengine/material/graph/graph.h"
