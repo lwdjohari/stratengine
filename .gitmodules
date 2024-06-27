@@ -43,3 +43,6 @@
 [submodule "thirdparty/imgui-node-editor"]
 	path = thirdparty/imgui-node-editor
 	url = https://github.com/thedmd/imgui-node-editor.git
+[submodule "thirdparty/imgizmo"]
+	path = thirdparty/imgizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git
