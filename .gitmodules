@@ -40,3 +40,6 @@
 [submodule "thirdparty/imgui-docked"]
 	path = thirdparty/imgui-docked
 	url = https://github.com/ocornut/imgui.git
+[submodule "thirdparty/imgui-node-editor"]
+	path = thirdparty/imgui-node-editor
+	url = https://github.com/thedmd/imgui-node-editor.git
