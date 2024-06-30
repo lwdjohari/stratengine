@@ -52,3 +52,6 @@
 [submodule "thirdparty/glfw"]
 	path = thirdparty/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "thirdparty/taskflow"]
+	path = thirdparty/taskflow
+	url = https://github.com/taskflow/taskflow.git
