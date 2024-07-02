@@ -9,7 +9,7 @@ class ShaderPass {
  public:
   explicit ShaderPass(ShaderEffect* effect): effect_(effect) {};
 
-  bgfx::ProgramHandle GetProgram() const { return effect_->GetProgram(); }
+  void* GetProgram() const { return effect_->GetProgram(); }
 
  private:
   ShaderEffect* effect_;

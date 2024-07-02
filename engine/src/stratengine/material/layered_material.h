@@ -14,7 +14,7 @@ class LayeredMaterial {
  public:
   void AddLayer(Material* material, float blendFactor);
   void Apply(PassType pass_type);
-  bgfx::ProgramHandle GetProgram() const;
+  void* GetProgram() const;
 
  private:
   std::vector<MaterialLayer> layers_;

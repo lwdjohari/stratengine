@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bgfx/bgfx.h>
 
 #include <glm/glm.hpp>
 #include <vector>
@@ -24,8 +23,8 @@ class Mesh {
 
   // void Render(bgfx::ProgramHandle shader_program);
 
-  bgfx::VertexBufferHandle GetVertexBuffer() const;
-  bgfx::IndexBufferHandle GetIndexBuffer() const;
+  void* GetVertexBuffer() const;
+  void* GetIndexBuffer() const;
   void SetMaterial(material::Material* material);
   void SetLayeredMaterial(material::LayeredMaterial* layeredMaterial);
   void SetVertices(const std::vector<glm::vec3>& vertices);
@@ -35,8 +34,8 @@ class Mesh {
  private:
   material::Material* material_;
   material::LayeredMaterial* layeredMaterial_;
-  bgfx::VertexBufferHandle vbh_;
-  bgfx::IndexBufferHandle ibh_;
+  void* vbh_;
+  void* ibh_;
   std::vector<glm::vec3> vertices_;
   std::vector<uint16_t> indices_;
 };

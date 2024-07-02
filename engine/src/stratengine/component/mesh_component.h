@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bgfx/bgfx.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -11,7 +10,7 @@ STRATE_INNER_NAMESPACE(component)
 
 class MeshComponent : public Component {
  public:
-  MeshComponent(bgfx::VertexBufferHandle vbh, bgfx::IndexBufferHandle ibh,
+  MeshComponent(void* vbh, void* ibh,
                 material::Material* material)
                   : vbh_(vbh), ibh_(ibh), material_(material) {}
 
@@ -19,28 +18,28 @@ class MeshComponent : public Component {
 
   void Render() override {
     if (game_object_) {
-      auto transform = game_object_->GetComponent<TransformComponent>();
-      if (transform) {
-        glm::mat4 mtx = transform->GetWorldTransformMatrix();
-        bgfx::setTransform(glm::value_ptr(mtx));
+      // auto transform = game_object_->GetComponent<TransformComponent>();
+      // if (transform) {
+      //   glm::mat4 mtx = transform->GetWorldTransformMatrix();
+      //   bgfx::setTransform(glm::value_ptr(mtx));
 
-        bgfx::setVertexBuffer(0, vbh_);
-        bgfx::setIndexBuffer(ibh_);
+      //   bgfx::setVertexBuffer(0, vbh_);
+      //   bgfx::setIndexBuffer(ibh_);
 
-        material_->Apply(material::PassType::Forward);
-        material_->Apply(material::PassType::Shadow);
+      //   material_->Apply(material::PassType::Forward);
+      //   material_->Apply(material::PassType::Shadow);
         
-        // material_->Apply();
-        // bgfx::setVertexBuffer(0, vbh_);
-        // bgfx::setIndexBuffer(ibh_);
-        // bgfx::submit(0, material_->GetShaderProgram());
-      }
+      //   // material_->Apply();
+      //   // bgfx::setVertexBuffer(0, vbh_);
+      //   // bgfx::setIndexBuffer(ibh_);
+      //   // bgfx::submit(0, material_->GetShaderProgram());
+      // }
     }
   }
 
  private:
-  bgfx::VertexBufferHandle vbh_;
-  bgfx::IndexBufferHandle ibh_;
+  void* vbh_;
+  void* ibh_;
   material::Material* material_;
 };
 

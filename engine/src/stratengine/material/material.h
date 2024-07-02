@@ -1,5 +1,4 @@
 #pragma once
-#include <bgfx/bgfx.h>
 
 #include <glm/glm.hpp>
 #include <unordered_map>
@@ -27,8 +26,8 @@ enum class TextureType {
 };
 
 struct SampledTexture {
-    bgfx::TextureHandle texture_handle;
-    bgfx::UniformHandle uniform_handle;
+    void* texture_handle;
+    void* uniform_handle;
 };
 
 class Material {
@@ -44,7 +43,7 @@ class Material {
 
   void SetTexture(TextureType type, const SampledTexture& texture);
   void Apply(PassType pass_type);
-  bgfx::ProgramHandle GetProgram() const;
+  void* GetProgram() const;
 
   void EnableFeature(TextureType type, bool enable);
 

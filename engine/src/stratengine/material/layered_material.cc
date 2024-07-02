@@ -10,19 +10,15 @@ void LayeredMaterial::AddLayer(Material* material, float blendFactor) {
 void LayeredMaterial::Apply(PassType pass_type) {
   for (const auto& layer : layers_) {
     layer.material->Apply(pass_type);
-    // Blend layer with the blendFactor
-    bgfx::setUniform(
-        bgfx::createUniform("u_blendFactor", bgfx::UniformType::Vec4),
-        &layer.blendFactor);
+    
   }
 }
 
-bgfx::ProgramHandle LayeredMaterial::GetProgram() const {
+void* LayeredMaterial::GetProgram() const {
   if (!layers_.empty()) {
-    return layers_.front()
-        .material->GetProgram();  // Assuming all layers use the same program
+    
   }
-  return BGFX_INVALID_HANDLE;
+  return nullptr;
 }
 
 STRATE_INNER_END_NAMESPACE

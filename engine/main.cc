@@ -1,8 +1,3 @@
-#include <SDL.h>
-#include <SDL_syswm.h>
-#include <bgfx/bgfx.h>
-#include <bgfx/platform.h>
-
 #include <cstring>
 #include <iostream>
 
@@ -15,13 +10,13 @@ int main(int argc, char* argv[]) {
   platform::RenderedBackend rendered_backend;
   platform::LinuxDisplayType linux_display_type;
   material::graph::constants::Constant1Vector cv;
-  
 
 // Auto Determine what best rendered in linux, windows, osx, android & ios and
 // the fallback
 #if STRATE_PLATFORM_LINUX == 1
-  rendered_backend = platform::DetermineRenderedBackend(
-      platform::RenderedBackend::kVulkan, platform::RenderedBackend::kOpenGL);
+  // rendered_backend = platform::DetermineRenderedBackend(
+  //     platform::RenderedBackend::kVulkan,
+  //     platform::RenderedBackend::kOpenGL);
 
   linux_display_type = platform::DetermineLinuxDisplayType(
       platform::LinuxDisplayType::kWayland, platform::LinuxDisplayType::kX11);
@@ -45,27 +40,27 @@ int main(int argc, char* argv[]) {
       platform::RenderedBackend::kOpenGLES, platform::RenderedBackend::kOpenGL);
 #endif
 
-  app.InitApp(rendered_backend, "Hello-Stratengine",
-              linux_display_type == platform::LinuxDisplayType::kWayland);
+  auto backends = platform::QuerySupportedBackends();
 
-  app.InitRenderedBackend();
+  for (auto& b : backends) {
+    std::cout << platform::ToStringEnumRenderedBackend(b.backend) << ": "
+              << b.major_version << "." << b.minor_version << std::endl;
+  }
+
+  auto res =
+      app.InitApp(platform::RenderedBackend::kOpenGL, "Hello-Stratengine",
+                  linux_display_type == platform::LinuxDisplayType::kWayland);
+
+  if (res != platform::StratEngineAppResult::kOk) {
+    std::cerr << "Failed to create Vulkan based engine" << std::endl;
+  }
 
   // Main loop
   bool running = true;
-  SDL_Event event;
-  while (running) {
-    while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_QUIT) {
-        running = false;
-        break;
-      }
-    }
-
-    if (!running)
-      break;
-    // Clear the screen and draw
-    bgfx::touch(0);
-    bgfx::frame();
+  while (!glfwWindowShouldClose(app.GetWindow())) {
+    glfwPollEvents();
+    // Rendering code here
+    glfwSwapBuffers(app.GetWindow());
   }
 
   std::cout << "Rendered Backend:   "
@@ -75,7 +70,6 @@ int main(int argc, char* argv[]) {
             << platform::ToStringEnumLinuxDisplayType(linux_display_type)
             << std::endl;
 
-  app.ShutdownRenderedBackend();
   app.ShutdownApp();
 
   return 0;
