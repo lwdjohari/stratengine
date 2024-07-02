@@ -25,6 +25,7 @@ endif()
 # Create an interface library for non-docked ImGui with Vulkan
 add_library(imgui STATIC ${IMGUI_CORE_SRC} ${IMGUI_BACKEND_VULKAN_SRC})
 
+target_link_libraries(imgui PUBLIC SDL2-static)
 
 target_include_directories(imgui PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/imgui-docked/

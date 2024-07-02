@@ -30,6 +30,7 @@ target_link_libraries(${PROJECT_NAME}
         GPUOpen::VulkanMemoryAllocator
         vk-bootstrap::vk-bootstrap
         SDL2-static
+        imgui
         glfw
         glm::glm
         assimp
@@ -51,8 +52,8 @@ add_library(${PROJECT_NAME}::strate ALIAS ${PROJECT_NAME} )
 
 
 #runner executable
-add_executable(${PROJECT_NAME}_editor main.cc)
-target_link_libraries(${PROJECT_NAME}_editor PUBLIC strate::strate)
-set_target_properties(${PROJECT_NAME}_editor PROPERTIES LINKER_LANGUAGE CXX)
-target_compile_features(${PROJECT_NAME}_editor PUBLIC ${CXX_FEATURE})
+add_executable(${PROJECT_NAME}-editor main.cc)
+target_link_libraries(${PROJECT_NAME}-editor PUBLIC strate::strate)
+set_target_properties(${PROJECT_NAME}-editor PROPERTIES LINKER_LANGUAGE CXX)
+target_compile_features(${PROJECT_NAME}-editor PUBLIC ${CXX_FEATURE})
 

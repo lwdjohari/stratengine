@@ -50,8 +50,8 @@ add_library(${PROJECT_NAME}::stratengine ALIAS ${PROJECT_NAME} )
 
 
 #runner executable
-add_executable(${PROJECT_NAME}_runner main.cc)
-target_link_libraries(${PROJECT_NAME}_runner PUBLIC stratengine::stratengine)
-set_target_properties(${PROJECT_NAME}_runner PROPERTIES LINKER_LANGUAGE CXX)
-target_compile_features(${PROJECT_NAME}_runner PUBLIC ${CXX_FEATURE})
+add_executable(${PROJECT_NAME}-runner main.cc)
+target_link_libraries(${PROJECT_NAME}-runner PUBLIC stratengine::stratengine)
+set_target_properties(${PROJECT_NAME}-runner PROPERTIES LINKER_LANGUAGE CXX)
+target_compile_features(${PROJECT_NAME}-runner PUBLIC ${CXX_FEATURE})
 
