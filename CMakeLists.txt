@@ -7,9 +7,25 @@ set(STRATENGINE_VER "0.0.9")
 message( STATUS "Stratengine v${STRATENGINE_VER}")
 message( STATUS "-----------------------------")
 
+set(SDL_SHARED OFF)
+set(BUILD_SHARED_LIBS OFF)
+# set(GLFW_BUILD_EXAMPLES  ${GLFW_STANDALONE})
+# set(GLFW_BUILD_TESTS  ${GLFW_STANDALONE})
+set(GLFW_BUILD_DOCS OFF)
+set(GLFW_INSTALL OFF)
+set(GLM_BUILD_INSTALL OFF)
+set(GLM_ENABLE_CXX_17 ON)
+set(GLM_ENABLE_FAST_MATH ON)
+set(GLM_BUILD_TESTS OFF)
+set(ASSIMP_INSTALL OFF)
+set(ASSIMP_BUILD_TESTS OFF)
+set(ASSIMP_INJECT_DEBUG_POSTFIX ON)
+set(MESHOPT_BUILD_SHARED_LIBS OFF)
+set(FASTGLTF_COMPILE_AS_CPP20 OFF)
+
 option(BUILD_SHARED_LIBS OFF)
 # Assimp
-option(ASSIMP_INSTALL OFF)
+option(ASSIMP_INSTALL OFF)  
 option(ASSIMP_BUILD_TESTS OFF)
 option(ASSIMP_INJECT_DEBUG_POSTFIX ON)
 # GLM
@@ -17,6 +33,11 @@ option(GLM_BUILD_INSTALL OFF)
 option(GLM_ENABLE_CXX_17 ON)
 option(GLM_ENABLE_FAST_MATH ON)
 option(GLM_BUILD_TESTS OFF)
+
+# option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" ${GLFW_STANDALONE})
+# option(GLFW_BUILD_TESTS "Build the GLFW test programs" ${GLFW_STANDALONE})
+option(GLFW_BUILD_DOCS "Build the GLFW documentation" ON)
+option(GLFW_INSTALL "Generate installation target" ON)
 
 include(ProjectCXX)
 set(ISROOT FALSE)
@@ -29,6 +50,7 @@ if(ISROOT)
   endif()
     option(STX_CXX_STANDARD_REQUIRED "CXX Required" ON)
     option(STX_CXX_EXTENSIONS "CXX Extensions" OFF)
+    
   NV_PROPOGATE_CXX_OPTIONS(${STX_CXX_VERSION} ${STX_CXX_STANDARD_REQUIRED} ${STX_CXX_EXTENSIONS})
   set(STX_USE_CATCH ON)
   set(STX_USE_TEST ON)
@@ -53,75 +75,62 @@ message(STATUS "CXX Feature: ${CXX_FEATURE}")
 
 find_package(Threads REQUIRED)
 
-set(SDL_SHARED OFF)
-# # Add SDL2
+#add FMT
+message(STATUS "")
+message(STATUS "Add libraries")
+message(STATUS "---------------------")
+message(STATUS "vulkan-sdk: ON")
+message(STATUS "vulkan-memory-allocator: ON")
+message(STATUS "vk-bootstrap: ON")
+message(STATUS "FMT: ON")
 message(STATUS "SDL2: ON")
+message(STATUS "ImGui: ON")
+message(STATUS "glm: ON")
+message(STATUS "glfw: ON")
+message(STATUS "assimp: ON")
+message(STATUS "fastgltf: ON")
+message(STATUS "EnTT: ON")
+message(STATUS "")
+
+
+add_subdirectory(thirdparty/fmt build-fmt)
+
+# Add SDL2
 add_subdirectory(thirdparty/sdl build-sdl)
 message(STATUS "SDL2 Include DIR: ${SDL2_INCLUDE_DIRS}")
 
+#add vk-bootstrap
+add_subdirectory(thirdparty/vma build-vma)
 
-# Add bgfx
-set(BGFX_INSTALL OFF)
-message(STATUS "bgfx: ON")
-add_subdirectory(thirdparty/bgfx-cmake build-bgfx)
-message(STATUS "bgfx Include DIR: ${BGFX_DIR}/include")
-message(STATUS "bgimg Include DIR: ${BIMG_DIR}/include")
-message(STATUS "bx Include DIR: ${BX_DIR}/include")
+#add vk-bootstrap
+add_subdirectory(thirdparty/vk-bootstrap build-vk-bootstrap)
 
+#add imgui
+add_subdirectory(build-script/imgui build-imgui)
 
+#add GLFW
+add_subdirectory(thirdparty/glfw build-glfw)
 
-
-set(GLM_BUILD_INSTALL OFF)
-set(GLM_ENABLE_CXX_17 ON)
-set(GLM_ENABLE_FAST_MATH ON)
-set(GLM_BUILD_TESTS OFF)
+#add GLM
 add_subdirectory(thirdparty/glm build-glm)
 
 #add Assimp
-set(ASSIMP_INSTALL OFF)
-set(ASSIMP_BUILD_TESTS OFF)
-set(ASSIMP_INJECT_DEBUG_POSTFIX ON)
 add_subdirectory(thirdparty/assimp build-assimp)
+
+#add Meshoptimizer
+add_subdirectory(thirdparty/meshoptimizer build-meshoptimizer)
+
+#add fastgltf
+add_subdirectory(thirdparty/fastgltf build-fastgltf)
+
+#add entt
+add_subdirectory(thirdparty/entt build-entt)
 
 
 # Include directories
+add_subdirectory(engine build-engine)
+add_subdirectory(editor build-editor)
 
 
-#Main headers and sources
-file(GLOB_RECURSE SOURCES_STX CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/src/*.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/src/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/engine/src/*.s
-)
 
-
-add_library(${PROJECT_NAME} STATIC ${SOURCES_STX} )
-target_link_libraries(${PROJECT_NAME}  
-    PUBLIC
-        SDL2-static
-        bgfx
-        bx
-        glm::glm
-        assimp
-    )
-set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_compile_definitions(${PROJECT_NAME} PUBLIC "STRATENGINE_USE_LIBUV=0")
-target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/engine/src/
-        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fp16/
-        ${BGFX_DIR}/include
-        ${BIMG_DIR}/include
-        ${BX_DIR}/include
-)
-
-add_library(${PROJECT_NAME}::stratengine ALIAS ${PROJECT_NAME} )
-
-
-#runner executable
-add_executable(${PROJECT_NAME}_runner engine/main.cc)
-target_link_libraries(${PROJECT_NAME}_runner PUBLIC stratengine::stratengine)
-set_target_properties(${PROJECT_NAME}_runner PROPERTIES LINKER_LANGUAGE CXX)
-target_compile_features(${PROJECT_NAME}_runner PUBLIC ${CXX_FEATURE})
 
