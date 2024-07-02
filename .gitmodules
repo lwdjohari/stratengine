@@ -13,9 +13,6 @@
 [submodule "thirdparty/libsndfile"]
 	path = thirdparty/libsndfile
 	url = https://github.com/libsndfile/libsndfile.git
-[submodule "thirdparty/bgfx-cmake"]
-	path = thirdparty/bgfx-cmake
-	url = https://github.com/bkaradzic/bgfx.cmake.git
 [submodule "thirdparty/fp16"]
 	path = thirdparty/fp16
 	url = https://github.com/Maratyszcza/FP16.git
