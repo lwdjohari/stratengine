@@ -93,7 +93,11 @@ message(STATUS "EnTT: ON")
 message(STATUS "")
 
 
+
 add_subdirectory(thirdparty/fmt build-fmt)
+
+# find Vulkan lib
+find_package(Vulkan REQUIRED)
 
 # Add SDL2
 add_subdirectory(thirdparty/sdl build-sdl)

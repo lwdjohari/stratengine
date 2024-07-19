@@ -26,6 +26,7 @@ file(GLOB_RECURSE SOURCES_STX_EDITOR CONFIGURE_DEPENDS
 add_library(${PROJECT_NAME} STATIC ${SOURCES_STX_EDITOR} )
 target_link_libraries(${PROJECT_NAME}  
     PUBLIC
+        Vulkan::Vulkan
         fmt
         GPUOpen::VulkanMemoryAllocator
         vk-bootstrap::vk-bootstrap
